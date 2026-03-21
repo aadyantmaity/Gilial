@@ -1,0 +1,21 @@
+{"event": "write", "memory_id": "a2a22717-93df-464b-a17f-e54e750172e2", "timestamp": "2026-03-21T22:46:44.702981"}
+{"event": "write", "memory_id": "9ea2b6c8-ea53-45bd-8895-8da402c78f14", "timestamp": "2026-03-21T22:46:44.729589"}
+{"event": "write", "memory_id": "9d033746-09f6-4b90-aae7-6a1c0ee5a16d", "timestamp": "2026-03-21T22:46:44.757661"}
+{"event": "write", "memory_id": "90686bf0-94a8-4023-b651-a573d7102e1e", "timestamp": "2026-03-21T22:46:44.785810"}
+{"event": "write", "memory_id": "16c21fe0-86e0-4324-8637-5bcfc6e67df8", "timestamp": "2026-03-21T22:46:44.812423"}
+{"event": "read", "memory_id": "a2a22717-93df-464b-a17f-e54e750172e2", "similarity_score": 0.5052013993263245, "timestamp": "2026-03-21T22:46:44.843071"}
+{"event": "read", "memory_id": "90686bf0-94a8-4023-b651-a573d7102e1e", "similarity_score": 0.7241926193237305, "timestamp": "2026-03-21T22:46:44.844393"}
+{"event": "read", "memory_id": "16c21fe0-86e0-4324-8637-5bcfc6e67df8", "similarity_score": 0.8856604099273682, "timestamp": "2026-03-21T22:46:44.845683"}
+{"event": "search", "query_preview": "European capitals and landmarks", "n_results": 3, "top_similarity": 0.5052013993263245, "timestamp": "2026-03-21T22:46:44.845725"}
+{"event": "read", "memory_id": "16c21fe0-86e0-4324-8637-5bcfc6e67df8", "similarity_score": 0.49352025985717773, "timestamp": "2026-03-21T22:46:44.860648"}
+{"event": "read", "memory_id": "9ea2b6c8-ea53-45bd-8895-8da402c78f14", "similarity_score": 0.7882005572319031, "timestamp": "2026-03-21T22:46:44.861869"}
+{"event": "read", "memory_id": "9d033746-09f6-4b90-aae7-6a1c0ee5a16d", "similarity_score": 0.886046826839447, "timestamp": "2026-03-21T22:46:44.863028"}
+{"event": "search", "query_preview": "artificial intelligence and coding", "n_results": 3, "top_similarity": 0.49352025985717773, "timestamp": "2026-03-21T22:46:44.863068"}
+{"event": "read", "memory_id": "a2a22717-93df-464b-a17f-e54e750172e2", "similarity_score": 0.5052013993263245, "timestamp": "2026-03-21T22:46:44.884024"}
+{"event": "read", "memory_id": "90686bf0-94a8-4023-b651-a573d7102e1e", "similarity_score": 0.7241926193237305, "timestamp": "2026-03-21T22:46:44.885734"}
+{"event": "read", "memory_id": "16c21fe0-86e0-4324-8637-5bcfc6e67df8", "similarity_score": 0.8856604099273682, "timestamp": "2026-03-21T22:46:44.887186"}
+{"event": "search", "query_preview": "European capitals and landmarks", "n_results": 3, "top_similarity": 0.5052013993263245, "timestamp": "2026-03-21T22:46:44.887251"}
+{"event": "read", "memory_id": "a2a22717-93df-464b-a17f-e54e750172e2", "similarity_score": 0.5052013993263245, "timestamp": "2026-03-21T22:46:44.901863"}
+{"event": "read", "memory_id": "90686bf0-94a8-4023-b651-a573d7102e1e", "similarity_score": 0.7241926193237305, "timestamp": "2026-03-21T22:46:44.903685"}
+{"event": "read", "memory_id": "16c21fe0-86e0-4324-8637-5bcfc6e67df8", "similarity_score": 0.8856604099273682, "timestamp": "2026-03-21T22:46:44.905346"}
+{"event": "search", "query_preview": "European capitals and landmarks", "n_results": 3, "top_similarity": 0.5052013993263245, "timestamp": "2026-03-21T22:46:44.905383"}
