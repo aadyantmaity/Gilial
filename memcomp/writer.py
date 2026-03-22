@@ -109,6 +109,20 @@ class MemoryWriter:
             dry_run=dry_run,
         )
 
+    def get_scheduler(
+        self,
+        interval_hours: float | None = None,
+        size_threshold: int | None = None,
+        dry_run: bool = True,
+    ) -> "CompressionScheduler":
+        from memcomp.scheduler import CompressionScheduler
+        return CompressionScheduler(
+            writer=self,
+            interval_hours=interval_hours,
+            size_threshold=size_threshold,
+            dry_run=dry_run,
+        )
+
     def get(self, memory_id: str) -> Memory | None:
         memory = self.db.get_by_id(memory_id)
         if memory:
