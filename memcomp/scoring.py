@@ -42,12 +42,11 @@ def _recency_score(events: list[dict]) -> float:
     If never accessed, use write time. Returns 0 if no events at all."""
     if not events:
         return 0.0
-    timestamps = [datetime.fromisoformat(e["timestamp"]) for e in events]
+    def _ensure_aware(dt: datetime) -> datetime:
+        return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
+    timestamps = [_ensure_aware(datetime.fromisoformat(e["timestamp"])) for e in events]
     last = max(timestamps)
     now = datetime.now(timezone.utc)
-    # make last timezone-aware if it isn't
-    if last.tzinfo is None:
-        last = last.replace(tzinfo=timezone.utc)
     days = (now - last).total_seconds() / 86400
     return math.exp(-days / 30)
 
