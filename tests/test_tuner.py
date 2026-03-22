@@ -1,5 +1,5 @@
-from gilial.tuner import CompressionTuner, TuneConfig, TuneResult
-from gilial.metrics import (
+from gilial.tuning.tuner import CompressionTuner, TuneConfig, TuneResult
+from gilial.eval.metrics import (
     EvalReport,
     RetrievalMetrics,
     StorageMetrics,

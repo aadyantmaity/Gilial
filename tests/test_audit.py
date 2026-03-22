@@ -1,5 +1,5 @@
 import pytest
-from gilial.audit import CompressionAudit
+from gilial.eval.audit import CompressionAudit
 
 
 def test_diff_identifies_deleted_added_retained(mock_writer):

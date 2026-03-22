@@ -16,12 +16,13 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 type Phase = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export default function LandingPage() {
   const [phase, setPhase] = useState<Phase>(0);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const els = document.querySelectorAll(".reveal");
@@ -39,6 +40,42 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!heroRef.current) return;
+      const scrollY = window.scrollY;
+      const heroBottom = heroRef.current.offsetHeight;
+      const parallaxAmount = Math.min(scrollY * 0.5, heroBottom);
+      if (heroRef.current) {
+        heroRef.current.style.transform = `translateY(${parallaxAmount * 0.3}px)`;
+      }
+
+      // Apply 3D effects to cards
+      const problemCards = document.querySelectorAll(".problem-card");
+      const featureCards = document.querySelectorAll(".feature-card");
+      const allCards = [...Array.from(problemCards), ...Array.from(featureCards)];
+
+      allCards.forEach((card, index) => {
+        const rect = (card as HTMLElement).getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+        const viewportCenter = window.innerHeight / 2;
+        const distance = cardCenter - viewportCenter;
+        const maxDistance = window.innerHeight;
+
+        // Clamp the rotation to reasonable values
+        const rotationX = Math.max(-20, Math.min(20, (distance / maxDistance) * 25));
+        const rotationY = (index % 2 === 0 ? -1 : 1) * 12;
+        const scale = 1 - Math.abs(distance) / (maxDistance * 2) * 0.05;
+
+        (card as HTMLElement).style.transform = `perspective(1200px) rotateX(${rotationX}deg) rotateY(${rotationY}deg) scale(${scale})`;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Call once on mount
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const selectPhase = useCallback((p: Phase) => {
     setPhase(p);
   }, []);
@@ -48,14 +85,6 @@ export default function LandingPage() {
       <nav>
         <div className="nav-left">
           <a href="#" className="logo" aria-label="Gilial home">
-            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="2" width="24" height="24" rx="6" stroke="#3c6e71" strokeWidth="2" />
-              <path
-                d="M9 9h2v2H9zM13 9h2v2h-2zM17 9h2v2h-2zM9 13h2v2H9zM13 13h2v2h-2zM17 13h2v2h-2zM11 17h6v2h-6z"
-                fill="#6dafb4"
-              />
-              <circle cx="14" cy="14" r="1" fill="#ffffff" />
-            </svg>
             Gilial
           </a>
           <ul className="nav-links">
@@ -74,31 +103,19 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <section className="hero">
-        <div className="floating-memories">
-          <div className="floating-card">user prefers dark mode for all editors</div>
-          <div className="floating-card">Paris is the capital of France</div>
-          <div className="floating-card">meeting scheduled for Thursday 3pm</div>
-          <div className="floating-card">API key stored in .env file</div>
-          <div className="floating-card">user&apos;s favorite language is Python</div>
-          <div className="floating-card">the Eiffel Tower was built in 1889</div>
-          <div className="floating-card">project deadline is end of Q2</div>
-          <div className="floating-card">database uses PostgreSQL 15</div>
-        </div>
+      <section className="hero" ref={heroRef}>
         <div className="hero-badge">
           <Sparkles size={14} strokeWidth={2} aria-hidden />
           Open Source · Built for AI Agents
         </div>
         <h1>
           <span className="gradient-text">
-            Vector DBs are finite —
-            <br />
-            what should the agent forget?
+            What should your agent forget?
           </span>
         </h1>
         <p>
-          Gilial automatically merges similar memories, deletes low-value ones, and summarizes clusters —
-          keeping your agent&apos;s memory lean, fast, and intelligent.
+          Gilial merges similar memories, deletes low-value ones, and summarizes clusters to
+          keep your agent&apos;s memory lean and fast.
         </p>
         <div className="hero-ctas">
           <a href="#" className="btn-ghost">
@@ -109,6 +126,7 @@ export default function LandingPage() {
       </section>
 
       <section className="problem reveal">
+        <div className="section-label">The Challenge</div>
         <h2 className="section-title">The Problem with Agent Memory</h2>
         <div className="problem-grid">
           <div className="problem-card">
@@ -181,7 +199,6 @@ export default function LandingPage() {
           </div>
           <div className="phase-panel" role="tabpanel">
             <div className={`phase-content${phase === 0 ? " active" : ""}`} data-phase="0">
-              <span className="phase-badge">Phase 1</span>
               <h3>Store & Retrieve</h3>
               <p className="phase-desc">
                 Embed memories with sentence-transformers, store in ChromaDB, retrieve by semantic similarity.
@@ -204,11 +221,9 @@ export default function LandingPage() {
             </div>
 
             <div className={`phase-content${phase === 1 ? " active" : ""}`} data-phase="1">
-              <span className="phase-badge">Phase 2</span>
               <h3>Importance Scoring</h3>
               <p className="phase-desc">
-                Composite score: recency (25%) + access frequency (30%) + retrieval rank (20%) + semantic
-                uniqueness (25%).
+                Score: recency (25%) + access frequency (30%) + retrieval rank (20%) + semantic uniqueness (25%).
               </p>
               <div
                 className="code-block"
@@ -226,7 +241,6 @@ export default function LandingPage() {
             </div>
 
             <div className={`phase-content${phase === 2 ? " active" : ""}`} data-phase="2">
-              <span className="phase-badge">Phase 3</span>
               <h3>Deletion</h3>
               <p className="phase-desc">
                 Threshold-based: drop below score floor, protect top N%. Dry-run mode previews changes before
@@ -251,7 +265,6 @@ export default function LandingPage() {
             </div>
 
             <div className={`phase-content${phase === 3 ? " active" : ""}`} data-phase="3">
-              <span className="phase-badge">Phase 4</span>
               <h3>Merging</h3>
               <p className="phase-desc">
                 HDBSCAN clustering + cosine similarity. Near-duplicates (&gt;0.92) merged into one, metadata
@@ -274,7 +287,6 @@ export default function LandingPage() {
             </div>
 
             <div className={`phase-content${phase === 4 ? " active" : ""}`} data-phase="4">
-              <span className="phase-badge">Phase 5</span>
               <h3>Summarization</h3>
               <p className="phase-desc">
                 Related clusters (0.75–0.92 similarity) sent to LLM, replaced with a concise summary memory.
@@ -297,7 +309,6 @@ export default function LandingPage() {
             </div>
 
             <div className={`phase-content${phase === 5 ? " active" : ""}`} data-phase="5">
-              <span className="phase-badge">Phase 6</span>
               <h3>Evaluation</h3>
               <p className="phase-desc">
                 NDCG, MRR, false deletion rate, semantic coverage. Quantify compression quality with a suite of
@@ -319,7 +330,6 @@ export default function LandingPage() {
             </div>
 
             <div className={`phase-content${phase === 6 ? " active" : ""}`} data-phase="6">
-              <span className="phase-badge">Phase 7</span>
               <h3>Tuning</h3>
               <p className="phase-desc">
                 A/B test compression configs. Compare conservative vs aggressive vs balanced strategies.
@@ -391,90 +401,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      <section className="architecture reveal">
-        <div className="section-label">System Design</div>
-        <h2 className="section-title">How the System Fits Together</h2>
-        <div className="arch-diagram">
-          <div className="arch-vert-container">
-            <div className="arch-row">
-              <div className="arch-box">Agent</div>
-              <span className="arch-arrow" aria-hidden>
-                <ArrowRight strokeWidth={2} />
-              </span>
-              <div className="arch-box primary">MemoryWriter</div>
-              <span className="arch-arrow" aria-hidden>
-                <ArrowRight strokeWidth={2} />
-              </span>
-              <div className="arch-box">ChromaDB</div>
-            </div>
-            <div className="arch-divider" />
-            <div className="arch-row">
-              <div className="arch-box">Telemetry</div>
-              <span className="arch-arrow" aria-hidden>
-                <ArrowRight strokeWidth={2} />
-              </span>
-              <div className="arch-box primary">Scheduler</div>
-            </div>
-            <div className="arch-divider" />
-            <div className="arch-row">
-              <div className="arch-group">
-                <div className="arch-box">Deletion</div>
-                <div className="arch-box">Merging</div>
-                <div className="arch-box">Summarization</div>
-              </div>
-            </div>
-            <div className="arch-divider" />
-            <div className="arch-row">
-              <div className="arch-box primary">Evaluator</div>
-              <span className="arch-arrow" aria-hidden>
-                <ArrowRight strokeWidth={2} />
-              </span>
-              <div className="arch-box primary">Tuner</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer>
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <a href="#" className="logo" aria-label="Gilial home">
-              <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
-                <rect x="2" y="2" width="24" height="24" rx="6" stroke="#3c6e71" strokeWidth="2" />
-                <path
-                  d="M9 9h2v2H9zM13 9h2v2h-2zM17 9h2v2h-2zM9 13h2v2H9zM13 13h2v2h-2zM17 13h2v2h-2zM11 17h6v2h-6z"
-                  fill="#6dafb4"
-                />
-                <circle cx="14" cy="14" r="1" fill="#ffffff" />
-              </svg>
-              Gilial
-            </a>
-            <span className="footer-tagline">Agent Memory Compression System</span>
-          </div>
-          <ul className="footer-links">
-            <li>
-              <a href="#" className="nav-link-icon">
-                <Github size={15} strokeWidth={2} aria-hidden />
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="#" className="nav-link-icon">
-                <BookOpen size={15} strokeWidth={2} aria-hidden />
-                Docs
-              </a>
-            </li>
-            <li>
-              <a href="#" className="nav-link-icon">
-                <Scale size={15} strokeWidth={2} aria-hidden />
-                MIT License
-              </a>
-            </li>
-          </ul>
-          <span className="footer-built">Built with Claude Code</span>
-        </div>
-      </footer>
     </>
   );
 }

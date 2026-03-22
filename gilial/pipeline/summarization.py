@@ -16,8 +16,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 import numpy as np
-from gilial.schema import Memory
-from gilial.merging import cosine_similarity, _cluster
+from gilial.core.schema import Memory
+from gilial.pipeline.merging import cosine_similarity, _cluster
 
 
 @dataclass

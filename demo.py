@@ -2,12 +2,12 @@
 Demo for the Agent Memory Compression System - All Phases
 """
 from gilial.writer import MemoryWriter
-from gilial.canary import CanarySet
-from gilial.regression import RetrievalRegressionTest, save_snapshot, load_snapshot
-from gilial.coverage import SemanticCoverageChecker
-from gilial.audit import CompressionAudit
-from gilial.evaluator import CompressionEvaluator
-from gilial.tuner import CompressionTuner, TuneConfig
+from gilial.eval.canary import CanarySet
+from gilial.scoring.regression import RetrievalRegressionTest, save_snapshot, load_snapshot
+from gilial.eval.coverage import SemanticCoverageChecker
+from gilial.eval.audit import CompressionAudit
+from gilial.eval.evaluator import CompressionEvaluator
+from gilial.tuning.tuner import CompressionTuner, TuneConfig
 
 SEP = "─" * 68
 

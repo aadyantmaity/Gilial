@@ -1,4 +1,4 @@
-from gilial.metrics import compute_ndcg, compute_mrr
+from gilial.eval.metrics import compute_ndcg, compute_mrr
 
 
 class TestComputeNDCG:

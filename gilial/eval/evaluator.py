@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from gilial.metrics import (
+from gilial.eval.metrics import (
     RetrievalMetrics,
     StorageMetrics,
     FalseDeletionMetrics,
@@ -8,7 +8,7 @@ from gilial.metrics import (
     compute_ndcg,
     compute_mrr,
 )
-from gilial.coverage import SemanticCoverageChecker
+from gilial.eval.coverage import SemanticCoverageChecker
 
 
 class CompressionEvaluator:

@@ -1,5 +1,5 @@
 import pytest
-from gilial.canary import CanarySet
+from gilial.eval.canary import CanarySet
 
 
 def test_inject_stores_memories_and_returns_ids(mock_writer):

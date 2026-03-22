@@ -3,7 +3,7 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
-from gilial.schema import Memory
+from gilial.core.schema import Memory
 
 
 def compute_importance(

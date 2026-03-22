@@ -1,6 +1,6 @@
 import pytest
-from gilial.schema import Memory
-from gilial.coverage import SemanticCoverageChecker
+from gilial.core.schema import Memory
+from gilial.eval.coverage import SemanticCoverageChecker
 from datetime import datetime, timezone
 from tests.conftest import _noisy_unit_vector
 

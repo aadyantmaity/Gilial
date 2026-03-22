@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from gilial.metrics import EvalReport
-from gilial.evaluator import CompressionEvaluator
+from gilial.eval.metrics import EvalReport
+from gilial.eval.evaluator import CompressionEvaluator
 
 
 @dataclass

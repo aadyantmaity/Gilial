@@ -3,8 +3,8 @@ import json
 import math
 import pytest
 from unittest.mock import MagicMock, patch
-from gilial.schema import Memory
-from gilial.merging import (
+from gilial.core.schema import Memory
+from gilial.pipeline.merging import (
     cosine_similarity,
     _find_merge_groups,
     run_merging,

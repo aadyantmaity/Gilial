@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
-from gilial.evaluator import CompressionEvaluator
-from gilial.metrics import EvalReport
-from gilial.canary import CanarySet, CanaryVerificationResult
+from gilial.eval.evaluator import CompressionEvaluator
+from gilial.eval.metrics import EvalReport
+from gilial.eval.canary import CanarySet, CanaryVerificationResult
 
 
 class TestCompressionEvaluator:

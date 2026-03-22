@@ -2,8 +2,8 @@
 import json
 import pytest
 from unittest.mock import MagicMock
-from gilial.schema import Memory
-from gilial.deletion import run_deletion, DeletionResult
+from gilial.core.schema import Memory
+from gilial.pipeline.deletion import run_deletion, DeletionResult
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

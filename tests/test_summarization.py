@@ -3,8 +3,8 @@ import json
 import math
 import pytest
 from unittest.mock import MagicMock, patch
-from gilial.schema import Memory
-from gilial.summarization import (
+from gilial.core.schema import Memory
+from gilial.pipeline.summarization import (
     run_summarization,
     _find_summary_groups,
     SummaryGroup,

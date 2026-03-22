@@ -34,6 +34,9 @@
   /* Vertical rhythm (aligned with hero → problem tight gap) */
   --section-pad-y: 4rem;
   --section-inner-gap: 2.25rem;
+
+  /* Fonts */
+  --font-display: var(--font-space-grotesk, sans-serif);
 }
 
 html {
@@ -65,9 +68,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
-  background: rgba(11, 18, 20, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--ink);
 }
 
 .nav-left {
@@ -80,10 +81,12 @@ nav {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.2rem;
   color: var(--text);
   text-decoration: none;
+  letter-spacing: -0.01em;
 }
 
 .logo svg {
@@ -119,6 +122,8 @@ section {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--section-pad-y) 2rem;
+  position: relative;
+  isolation: isolate;
 }
 
 .section-label {
@@ -131,10 +136,12 @@ section {
 }
 
 .section-title {
+  font-family: var(--font-display);
   font-size: 2.5rem;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.15;
   margin-bottom: 1rem;
+  letter-spacing: -0.02em;
 }
 
 .section-subtitle {
@@ -156,6 +163,7 @@ section {
   text-align: center;
   position: relative;
   overflow: hidden;
+  transition: transform 0.1s linear;
 }
 
 .hero::before {
@@ -167,6 +175,16 @@ section {
   background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(60, 110, 113, 0.28), transparent 62%);
   pointer-events: none;
   z-index: 0;
+  animation: pulseGradient 6s ease-in-out infinite;
+}
+
+@keyframes pulseGradient {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .hero-badge {
@@ -184,11 +202,13 @@ section {
 }
 
 .hero h1 {
+  font-family: var(--font-display);
   font-size: clamp(2.5rem, 5.5vw, 4.2rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.12;
   margin-bottom: 1.5rem;
   white-space: pre-line;
+  letter-spacing: -0.02em;
 }
 
 .hero p {
@@ -229,97 +249,10 @@ section {
   background: rgba(60, 110, 113, 0.12);
 }
 
-.floating-memories {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.floating-card {
-  position: absolute;
-  padding: 0.6rem 1rem;
-  border: 1px solid rgba(109, 175, 180, 0.14);
-  border-radius: 8px;
-  background: rgba(23, 40, 43, 0.65);
-  backdrop-filter: blur(8px);
-  font-size: 0.7rem;
-  color: var(--muted);
-  white-space: nowrap;
-  animation: floatUp linear infinite;
-  opacity: 0;
-}
-
-@keyframes floatUp {
-  0% {
-    opacity: 0;
-    transform: translateY(100px);
-  }
-  10% {
-    opacity: 0.4;
-  }
-  90% {
-    opacity: 0.4;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-600px);
-  }
-}
-
-.floating-card:nth-child(1) {
-  left: 5%;
-  animation-duration: 18s;
-  animation-delay: 0s;
-}
-.floating-card:nth-child(2) {
-  left: 20%;
-  animation-duration: 22s;
-  animation-delay: 3s;
-}
-.floating-card:nth-child(3) {
-  left: 40%;
-  animation-duration: 20s;
-  animation-delay: 6s;
-}
-.floating-card:nth-child(4) {
-  left: 60%;
-  animation-duration: 24s;
-  animation-delay: 2s;
-}
-.floating-card:nth-child(5) {
-  left: 75%;
-  animation-duration: 19s;
-  animation-delay: 8s;
-}
-.floating-card:nth-child(6) {
-  left: 88%;
-  animation-duration: 21s;
-  animation-delay: 5s;
-}
-.floating-card:nth-child(7) {
-  left: 12%;
-  animation-duration: 23s;
-  animation-delay: 10s;
-}
-.floating-card:nth-child(8) {
-  left: 50%;
-  animation-duration: 17s;
-  animation-delay: 7s;
-}
-
-.hero > *:not(.floating-memories) {
-  position: relative;
-  z-index: 1;
-}
 
 .problem {
   text-align: center;
-  padding-top: var(--section-inner-gap);
+  padding-top: var(--section-pad-y);
 }
 
 .problem-grid {
@@ -337,12 +270,36 @@ section {
   text-align: left;
   transition:
     border-color 0.3s,
-    transform 0.3s;
+    transform 0.05s linear,
+    box-shadow 0.3s;
+  animation: slideInUp 0.8s ease-out both;
+  transform-style: preserve-3d;
+}
+
+.problem-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.problem-card:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.problem-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .problem-card:hover {
   border-color: var(--primary-mid);
-  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(60, 110, 113, 0.25), 0 0 20px rgba(109, 175, 180, 0.15);
 }
 
 .problem-card .card-icon {
@@ -364,9 +321,11 @@ section {
 }
 
 .problem-card h3 {
+  font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
 }
 
 .problem-card p {
@@ -405,11 +364,13 @@ section {
   transition:
     box-shadow 0.22s ease,
     background 0.22s ease,
-    border-color 0.22s ease;
+    border-color 0.22s ease,
+    transform 0.22s ease;
 }
 
 .stepper-item:hover:not(.active) {
   background: rgba(60, 110, 113, 0.08);
+  transform: translateX(2px);
 }
 
 /* Recessed “tray” when active — physical depth, no side chip */
@@ -518,9 +479,11 @@ section {
 }
 
 .phase-content h3 {
+  font-family: var(--font-display);
   font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
 }
 
 .phase-content .phase-desc {
@@ -528,7 +491,8 @@ section {
   font-size: 0.9rem;
   line-height: 1.7;
   margin-bottom: 1.5rem;
-  max-width: 560px;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .code-block {
@@ -585,12 +549,45 @@ section {
   text-align: left;
   transition:
     border-color 0.3s,
-    transform 0.3s;
+    transform 0.05s linear,
+    box-shadow 0.3s;
+  animation: scaleIn 0.7s ease-out both;
+  transform-style: preserve-3d;
+}
+
+.feature-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.feature-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.feature-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.feature-card:nth-child(4) {
+  animation-delay: 0.1s;
+}
+.feature-card:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.feature-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .feature-card:hover {
   border-color: var(--primary-mid);
-  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(60, 110, 113, 0.2), 0 0 16px rgba(109, 175, 180, 0.12);
 }
 
 .feature-icon {
@@ -606,9 +603,11 @@ section {
 }
 
 .feature-card h3 {
+  font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .feature-card p {
@@ -788,6 +787,11 @@ footer {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+strong, b {
+  font-weight: 700;
+  color: var(--primary-light);
 }
 
 @media (max-width: 900px) {

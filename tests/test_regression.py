@@ -1,6 +1,6 @@
 import json
 import pytest
-from gilial.regression import RetrievalRegressionTest, save_snapshot, load_snapshot
+from gilial.scoring.regression import RetrievalRegressionTest, save_snapshot, load_snapshot
 
 
 def test_snapshot_returns_correct_structure(mock_writer):
