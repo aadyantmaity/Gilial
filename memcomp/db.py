@@ -33,6 +33,10 @@ class ChromaDB:
             return []
         return [self._to_memory(result, i) for i in range(len(result["ids"]))]
 
+    def delete(self, memory_id: str):
+        """Remove a memory from the collection by ID."""
+        self.collection.delete(ids=[memory_id])
+
     def search(self, query_embedding: list[float], n_results: int = 5) -> list[tuple[Memory, float]]:
         result = self.collection.query(
             query_embeddings=[query_embedding],

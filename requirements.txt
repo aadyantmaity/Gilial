@@ -1,3 +1,5 @@
 chromadb
 sentence-transformers
 pytest
+scikit-learn
+hdbscan

@@ -1,2 +1,5 @@
 /.claude
 /README.md
+/__pycache__
+telemetry.jsonl
+/chroma_data

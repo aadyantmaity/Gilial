@@ -63,7 +63,7 @@ def embedding_dispatcher():
 
 @pytest.fixture()
 def mock_writer(tmp_path, embedding_dispatcher):
-    """A MemoryWriter with mocked OpenAI that returns predictable embeddings.
+    """A MemoryWriter with mocked SentenceTransformer that returns predictable embeddings.
 
     The writer stores data in a temporary Chroma directory and writes
     telemetry into *tmp_path*/telemetry.jsonl.
@@ -71,21 +71,11 @@ def mock_writer(tmp_path, embedding_dispatcher):
     chroma_dir = str(tmp_path / "chroma_data")
     telemetry_path = str(tmp_path / "telemetry.jsonl")
 
-    with patch("memcomp.writer.OpenAI") as MockOpenAI:
-        mock_client = MagicMock()
-        MockOpenAI.return_value = mock_client
+    with patch("memcomp.writer._model") as mock_model:
+        import numpy as np
+        mock_model.encode.side_effect = lambda text: np.array(embedding_dispatcher.get(text))
 
-        # Wire up embeddings.create to use the dispatcher
-        def _create(input, model=None):
-            resp = MagicMock()
-            datum = MagicMock()
-            datum.embedding = embedding_dispatcher.get(input)
-            resp.data = [datum]
-            return resp
-
-        mock_client.embeddings.create.side_effect = _create
-
-        writer = MemoryWriter(openai_api_key="sk-fake", chroma_path=chroma_dir)
+        writer = MemoryWriter(chroma_path=chroma_dir)
         writer.telemetry.log_path = tmp_path / "telemetry.jsonl"
         yield writer
 
