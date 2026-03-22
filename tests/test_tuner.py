@@ -1,5 +1,5 @@
-from memcomp.tuner import CompressionTuner, TuneConfig, TuneResult
-from memcomp.metrics import (
+from gilial.tuner import CompressionTuner, TuneConfig, TuneResult
+from gilial.metrics import (
     EvalReport,
     RetrievalMetrics,
     StorageMetrics,

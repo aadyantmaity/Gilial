@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from memcomp.scheduler import CompressionScheduler, CompressionLog
+from gilial.scheduler import CompressionScheduler, CompressionLog
 
 
 @dataclass

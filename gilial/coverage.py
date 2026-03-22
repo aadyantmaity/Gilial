@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 from scipy.spatial import ConvexHull
 
-from memcomp.schema import Memory
+from gilial.schema import Memory
 
 
 @dataclass

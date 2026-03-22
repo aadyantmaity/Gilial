@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from memcomp.metrics import EvalReport
-from memcomp.evaluator import CompressionEvaluator
+from gilial.metrics import EvalReport
+from gilial.evaluator import CompressionEvaluator
 
 
 @dataclass

@@ -1,5 +1,5 @@
 import pytest
-from memcomp.audit import CompressionAudit
+from gilial.audit import CompressionAudit
 
 
 def test_diff_identifies_deleted_added_retained(mock_writer):

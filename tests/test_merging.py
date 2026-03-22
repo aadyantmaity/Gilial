@@ -3,8 +3,8 @@ import json
 import math
 import pytest
 from unittest.mock import MagicMock, patch
-from memcomp.schema import Memory
-from memcomp.merging import (
+from gilial.schema import Memory
+from gilial.merging import (
     cosine_similarity,
     _find_merge_groups,
     run_merging,
@@ -97,7 +97,7 @@ def test_dry_run_does_not_delete(tmp_path):
     db = mock_db()
     stored = []
     writer = mock_writer(stored)
-    with patch("memcomp.merging._cluster", return_value={0: [a, b]}):
+    with patch("gilial.merging._cluster", return_value={0: [a, b]}):
         result = run_merging([a, b], db, writer, similarity_threshold=0.92, dry_run=True, log_path=str(tmp_path/"m.jsonl"))
     db.delete.assert_not_called()
     assert len(stored) == 0  # no new memory stored in dry run
@@ -111,7 +111,7 @@ def test_real_run_deletes_originals_and_stores_merged(tmp_path):
     db = mock_db()
     stored = []
     writer = mock_writer(stored)
-    with patch("memcomp.merging._cluster", return_value={0: [a, b]}):
+    with patch("gilial.merging._cluster", return_value={0: [a, b]}):
         result = run_merging([a, b], db, writer, similarity_threshold=0.92, dry_run=False, log_path=str(tmp_path/"m.jsonl"))
     assert db.delete.call_count == 2
     assert len(stored) == 1  # one merged memory created
@@ -125,7 +125,7 @@ def test_merged_memory_takes_max_importance(tmp_path):
     db = mock_db()
     stored = []
     writer = mock_writer(stored)
-    with patch("memcomp.merging._cluster", return_value={0: [a, b]}):
+    with patch("gilial.merging._cluster", return_value={0: [a, b]}):
         run_merging([a, b], db, writer, similarity_threshold=0.92, dry_run=False, log_path=str(tmp_path/"m.jsonl"))
     assert stored[0].importance_score == 0.8
 
@@ -139,7 +139,7 @@ def test_unchanged_memories_returned(tmp_path):
     db = mock_db()
     stored = []
     writer = mock_writer(stored)
-    with patch("memcomp.merging._cluster", return_value={0: [close_a, close_b], -1: [far]}):
+    with patch("gilial.merging._cluster", return_value={0: [close_a, close_b], -1: [far]}):
         result = run_merging([close_a, close_b, far], db, writer, similarity_threshold=0.92, dry_run=True, log_path=str(tmp_path/"m.jsonl"))
     assert far in result.unchanged
 
@@ -150,7 +150,7 @@ def test_merge_log_written(tmp_path):
     a = make_memory(unit_vec(0), content="A")
     b = make_memory(near_vec(0, noise=0.01), content="B")
     log = tmp_path / "m.jsonl"
-    with patch("memcomp.merging._cluster", return_value={0: [a, b]}):
+    with patch("gilial.merging._cluster", return_value={0: [a, b]}):
         run_merging([a, b], mock_db(), mock_writer([]), similarity_threshold=0.92, dry_run=True, log_path=str(log))
     assert log.exists()
     events = [json.loads(l) for l in log.read_text().splitlines()]

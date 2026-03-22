@@ -1,7 +1,7 @@
 import math
 import pytest
 from unittest.mock import patch, MagicMock
-from memcomp.writer import MemoryWriter
+from gilial.writer import MemoryWriter
 
 
 # ---------------------------------------------------------------------------
@@ -71,7 +71,7 @@ def mock_writer(tmp_path, embedding_dispatcher):
     chroma_dir = str(tmp_path / "chroma_data")
     telemetry_path = str(tmp_path / "telemetry.jsonl")
 
-    with patch("memcomp.writer._model") as mock_model:
+    with patch("gilial.writer._model") as mock_model:
         import numpy as np
         mock_model.encode.side_effect = lambda text: np.array(embedding_dispatcher.get(text))
 

@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from memcomp.writer import MemoryWriter
+    from gilial.writer import MemoryWriter
 
 logger = logging.getLogger(__name__)
 

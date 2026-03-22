@@ -1,5 +1,5 @@
 import chromadb
-from memcomp.schema import Memory
+from gilial.schema import Memory
 from datetime import datetime
 
 class ChromaDB:

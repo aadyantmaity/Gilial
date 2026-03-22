@@ -1,13 +1,13 @@
 """
 Demo for the Agent Memory Compression System - All Phases
 """
-from memcomp.writer import MemoryWriter
-from memcomp.canary import CanarySet
-from memcomp.regression import RetrievalRegressionTest, save_snapshot, load_snapshot
-from memcomp.coverage import SemanticCoverageChecker
-from memcomp.audit import CompressionAudit
-from memcomp.evaluator import CompressionEvaluator
-from memcomp.tuner import CompressionTuner, TuneConfig
+from gilial.writer import MemoryWriter
+from gilial.canary import CanarySet
+from gilial.regression import RetrievalRegressionTest, save_snapshot, load_snapshot
+from gilial.coverage import SemanticCoverageChecker
+from gilial.audit import CompressionAudit
+from gilial.evaluator import CompressionEvaluator
+from gilial.tuner import CompressionTuner, TuneConfig
 
 SEP = "─" * 68
 

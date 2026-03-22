@@ -47,7 +47,7 @@ export default function LandingPage() {
     <>
       <nav>
         <div className="nav-left">
-          <a href="#" className="logo" aria-label="MemComp home">
+          <a href="#" className="logo" aria-label="Gilial home">
             <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="2" y="2" width="24" height="24" rx="6" stroke="#3c6e71" strokeWidth="2" />
               <path
@@ -56,7 +56,7 @@ export default function LandingPage() {
               />
               <circle cx="14" cy="14" r="1" fill="#ffffff" />
             </svg>
-            MemComp
+            Gilial
           </a>
           <ul className="nav-links">
             <li>
@@ -97,7 +97,7 @@ export default function LandingPage() {
           </span>
         </h1>
         <p>
-          MemComp automatically merges similar memories, deletes low-value ones, and summarizes clusters —
+          Gilial automatically merges similar memories, deletes low-value ones, and summarizes clusters —
           keeping your agent&apos;s memory lean, fast, and intelligent.
         </p>
         <div className="hero-ctas">
@@ -439,7 +439,7 @@ export default function LandingPage() {
       <footer>
         <div className="footer-inner">
           <div className="footer-brand">
-            <a href="#" className="logo" aria-label="MemComp home">
+            <a href="#" className="logo" aria-label="Gilial home">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
                 <rect x="2" y="2" width="24" height="24" rx="6" stroke="#3c6e71" strokeWidth="2" />
                 <path
@@ -448,7 +448,7 @@ export default function LandingPage() {
                 />
                 <circle cx="14" cy="14" r="1" fill="#ffffff" />
               </svg>
-              MemComp
+              Gilial
             </a>
             <span className="footer-tagline">Agent Memory Compression System</span>
           </div>

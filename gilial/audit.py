@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from memcomp.schema import Memory
+from gilial.schema import Memory
 
 
 @dataclass

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from memcomp.metrics import (
+from gilial.metrics import (
     RetrievalMetrics,
     StorageMetrics,
     FalseDeletionMetrics,
@@ -8,7 +8,7 @@ from memcomp.metrics import (
     compute_ndcg,
     compute_mrr,
 )
-from memcomp.coverage import SemanticCoverageChecker
+from gilial.coverage import SemanticCoverageChecker
 
 
 class CompressionEvaluator:

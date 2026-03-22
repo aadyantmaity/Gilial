@@ -1,5 +1,5 @@
 import pytest
-from memcomp.canary import CanarySet
+from gilial.canary import CanarySet
 
 
 def test_inject_stores_memories_and_returns_ids(mock_writer):

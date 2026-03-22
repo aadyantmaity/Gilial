@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 import numpy as np
-from memcomp.schema import Memory
+from gilial.schema import Memory
 
 
 @dataclass

@@ -3,8 +3,8 @@ import json
 import math
 import pytest
 from datetime import datetime, timezone, timedelta
-from memcomp.schema import Memory
-from memcomp.scoring import compute_importance, score_all, _recency_score, _access_score, _retrieval_rank_score
+from gilial.schema import Memory
+from gilial.scoring import compute_importance, score_all, _recency_score, _access_score, _retrieval_rank_score
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────

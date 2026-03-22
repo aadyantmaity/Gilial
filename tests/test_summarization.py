@@ -3,8 +3,8 @@ import json
 import math
 import pytest
 from unittest.mock import MagicMock, patch
-from memcomp.schema import Memory
-from memcomp.summarization import (
+from gilial.schema import Memory
+from gilial.summarization import (
     run_summarization,
     _find_summary_groups,
     SummaryGroup,
@@ -86,7 +86,7 @@ def test_dry_run_does_not_delete_or_store(tmp_path):
     db = mock_db()
     stored = []
     writer = mock_writer(stored)
-    with patch("memcomp.summarization._cluster", return_value={0: [a, b]}):
+    with patch("gilial.summarization._cluster", return_value={0: [a, b]}):
         result = run_summarization([a, b], db, writer, fake_llm,
                                    low_threshold=0.75, high_threshold=0.92,
                                    dry_run=True, log_path=str(tmp_path/"s.jsonl"))
@@ -98,7 +98,7 @@ def test_dry_run_still_generates_summary_text(tmp_path):
     """Even in dry run, summary_text should be populated."""
     a = make_memory(scaled_vec(0, 0.8), content="Paris is a city")
     b = make_memory(unit_vec(0), content="France is a country")
-    with patch("memcomp.summarization._cluster", return_value={0: [a, b]}):
+    with patch("gilial.summarization._cluster", return_value={0: [a, b]}):
         result = run_summarization([a, b], mock_db(), mock_writer([]), fake_llm,
                                    low_threshold=0.75, high_threshold=0.92,
                                    dry_run=True, log_path=str(tmp_path/"s.jsonl"))
@@ -114,7 +114,7 @@ def test_real_run_stores_summary_and_deletes_sources(tmp_path):
     db = mock_db()
     stored = []
     writer = mock_writer(stored)
-    with patch("memcomp.summarization._cluster", return_value={0: [a, b]}):
+    with patch("gilial.summarization._cluster", return_value={0: [a, b]}):
         run_summarization([a, b], db, writer, fake_llm,
                           low_threshold=0.75, high_threshold=0.92,
                           dry_run=False, log_path=str(tmp_path/"s.jsonl"))
@@ -129,7 +129,7 @@ def test_summary_takes_max_importance(tmp_path):
     b = make_memory(unit_vec(0), content="B", importance_score=0.3)
     stored = []
     writer = mock_writer(stored)
-    with patch("memcomp.summarization._cluster", return_value={0: [a, b]}):
+    with patch("gilial.summarization._cluster", return_value={0: [a, b]}):
         run_summarization([a, b], mock_db(), writer, fake_llm,
                           low_threshold=0.75, high_threshold=0.92,
                           dry_run=False, log_path=str(tmp_path/"s.jsonl"))
@@ -142,7 +142,7 @@ def test_unchanged_memories_returned(tmp_path):
     a = make_memory(scaled_vec(0, 0.8), content="A")
     b = make_memory(unit_vec(0), content="B")
     far = make_memory(unit_vec(10), content="C")
-    with patch("memcomp.summarization._cluster", return_value={0: [a, b], -1: [far]}):
+    with patch("gilial.summarization._cluster", return_value={0: [a, b], -1: [far]}):
         result = run_summarization([a, b, far], mock_db(), mock_writer([]), fake_llm,
                                    low_threshold=0.75, high_threshold=0.92,
                                    dry_run=True, log_path=str(tmp_path/"s.jsonl"))
@@ -155,7 +155,7 @@ def test_summarization_log_written(tmp_path):
     a = make_memory(scaled_vec(0, 0.8), content="A")
     b = make_memory(unit_vec(0), content="B")
     log = tmp_path / "s.jsonl"
-    with patch("memcomp.summarization._cluster", return_value={0: [a, b]}):
+    with patch("gilial.summarization._cluster", return_value={0: [a, b]}):
         run_summarization([a, b], mock_db(), mock_writer([]), fake_llm,
                           low_threshold=0.75, high_threshold=0.92,
                           dry_run=True, log_path=str(log))
@@ -184,7 +184,7 @@ def test_llm_fn_called_with_member_content(tmp_path):
     def tracking_llm(texts):
         calls.append(texts)
         return "summary"
-    with patch("memcomp.summarization._cluster", return_value={0: [a, b]}):
+    with patch("gilial.summarization._cluster", return_value={0: [a, b]}):
         run_summarization([a, b], mock_db(), mock_writer([]), tracking_llm,
                           low_threshold=0.75, high_threshold=0.92,
                           dry_run=True, log_path=str(tmp_path/"s.jsonl"))

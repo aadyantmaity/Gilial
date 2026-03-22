@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
-from memcomp.schema import Memory
-from memcomp.db import ChromaDB
-from memcomp.telemetry import Telemetry
+from gilial.schema import Memory
+from gilial.db import ChromaDB
+from gilial.telemetry import Telemetry
 
 _model = SentenceTransformer("all-MiniLM-L6-v2")  # 384-dim, runs locally, no API key
 
@@ -29,7 +29,7 @@ class MemoryWriter:
             self.db.update_metadata(memory)
             self.telemetry.log_read(memory.id, similarity_score=score)
         self.telemetry.log_search(query, results)
-        from memcomp.scoring import compute_importance
+        from gilial.scoring import compute_importance
         all_memories = self.db.get_all()
         for memory, score in results:
             memory.importance_score = compute_importance(memory, all_memories, str(self.telemetry.log_path))
@@ -38,7 +38,7 @@ class MemoryWriter:
 
     def rescore_all(self) -> dict[str, float]:
         """Recompute and persist importance scores for every memory."""
-        from memcomp.scoring import score_all
+        from gilial.scoring import score_all
         all_memories = self.db.get_all()
         scores = score_all(all_memories, str(self.telemetry.log_path))
         for memory in all_memories:
@@ -53,7 +53,7 @@ class MemoryWriter:
         dry_run: bool = True,
     ) -> "DeletionResult":
         """Run Phase 3a deletion compression. Dry-run by default."""
-        from memcomp.deletion import run_deletion, DeletionResult
+        from gilial.deletion import run_deletion, DeletionResult
         all_memories = self.db.get_all()
         # ensure scores are fresh
         scores = self.rescore_all()
@@ -74,7 +74,7 @@ class MemoryWriter:
         dry_run: bool = True,
     ) -> "MergingResult":
         """Run Phase 3b merge compression. Dry-run by default."""
-        from memcomp.merging import run_merging, MergingResult
+        from gilial.merging import run_merging, MergingResult
         all_memories = self.db.get_all()
         return run_merging(
             memories=all_memories,
@@ -94,7 +94,7 @@ class MemoryWriter:
         dry_run: bool = True,
     ) -> "SummarizationResult":
         """Run Phase 3c summarization compression. Dry-run by default."""
-        from memcomp.summarization import run_summarization, make_llm_fn, SummarizationResult
+        from gilial.summarization import run_summarization, make_llm_fn, SummarizationResult
         all_memories = self.db.get_all()
         if llm_fn is None:
             llm_fn = make_llm_fn(self)
@@ -115,7 +115,7 @@ class MemoryWriter:
         size_threshold: int | None = None,
         dry_run: bool = True,
     ) -> "CompressionScheduler":
-        from memcomp.scheduler import CompressionScheduler
+        from gilial.scheduler import CompressionScheduler
         return CompressionScheduler(
             writer=self,
             interval_hours=interval_hours,
