@@ -85,6 +85,30 @@ class MemoryWriter:
             dry_run=dry_run,
         )
 
+    def compress_summarize(
+        self,
+        llm_fn=None,
+        low_threshold: float = 0.75,
+        high_threshold: float = 0.92,
+        min_cluster_size: int = 2,
+        dry_run: bool = True,
+    ) -> "SummarizationResult":
+        """Run Phase 3c summarization compression. Dry-run by default."""
+        from memcomp.summarization import run_summarization, make_llm_fn, SummarizationResult
+        all_memories = self.db.get_all()
+        if llm_fn is None:
+            llm_fn = make_llm_fn(self)
+        return run_summarization(
+            memories=all_memories,
+            db=self.db,
+            writer=self,
+            llm_fn=llm_fn,
+            low_threshold=low_threshold,
+            high_threshold=high_threshold,
+            min_cluster_size=min_cluster_size,
+            dry_run=dry_run,
+        )
+
     def get(self, memory_id: str) -> Memory | None:
         memory = self.db.get_by_id(memory_id)
         if memory:

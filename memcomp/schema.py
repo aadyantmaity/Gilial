@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 @dataclass
@@ -18,7 +18,7 @@ class Memory:
             id=str(uuid.uuid4()),
             content=content,
             embedding=embedding,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             tags=tags or [],
             importance_score=importance_score,
         )

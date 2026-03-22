@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 class Telemetry:
@@ -8,7 +8,7 @@ class Telemetry:
         self.log_path = Path(log_path)
 
     def _write(self, event: dict):
-        event["timestamp"] = datetime.utcnow().isoformat()
+        event["timestamp"] = datetime.now(timezone.utc).isoformat()
         with open(self.log_path, "a") as f:
             f.write(json.dumps(event) + "\n")
 
