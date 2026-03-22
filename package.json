@@ -1,0 +1,9 @@
+{
+  "name": "memcomp",
+  "private": true,
+  "scripts": {
+    "install:web": "npm install --prefix web",
+    "dev:web": "npm run dev --prefix web",
+    "build:web": "npm run build --prefix web"
+  }
+}
