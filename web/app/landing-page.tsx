@@ -8,17 +8,18 @@ import {
   BookOpen,
   Brain,
   Database,
-  Github,
   Layers,
   Scale,
   ShieldCheck,
-  Sparkles,
   Trash2,
   Zap,
 } from "lucide-react";
 import { useCallback, useEffect, useState, useRef } from "react";
+import TextType from "@/components/TextType";
+import BorderGlow from "@/components/BorderGlow";
 
 type Phase = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
 
 export default function LandingPage() {
   const [phase, setPhase] = useState<Phase>(0);
@@ -42,14 +43,6 @@ export default function LandingPage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!heroRef.current) return;
-      const scrollY = window.scrollY;
-      const heroBottom = heroRef.current.offsetHeight;
-      const parallaxAmount = Math.min(scrollY * 0.5, heroBottom);
-      if (heroRef.current) {
-        heroRef.current.style.transform = `translateY(${parallaxAmount * 0.3}px)`;
-      }
-
       // Apply 3D effects to cards
       const problemCards = document.querySelectorAll(".problem-card");
       const featureCards = document.querySelectorAll(".feature-card");
@@ -96,7 +89,7 @@ export default function LandingPage() {
             </li>
             <li>
               <a href="#" className="nav-link-icon">
-                GitHub
+                Docs
               </a>
             </li>
           </ul>
@@ -104,32 +97,32 @@ export default function LandingPage() {
       </nav>
 
       <section className="hero" ref={heroRef}>
-        <div className="hero-badge">
-          <Sparkles size={14} strokeWidth={2} aria-hidden />
-          Open Source · Built for AI Agents
-        </div>
         <h1>
           <span className="gradient-text">
-            What should your agent forget?
+            <TextType
+              text="What should your agent forget?"
+              as="span"
+              typingSpeed={75}
+              pauseDuration={3000}
+              deletingSpeed={50}
+              loop={false}
+              showCursor
+              cursorCharacter="_"
+              className="gradient-text"
+            />
           </span>
         </h1>
-        <p>
+        <p className="hero-subtitle-fade">
           Gilial merges similar memories, deletes low-value ones, and summarizes clusters to
           keep your agent&apos;s memory lean and fast.
         </p>
-        <div className="hero-ctas">
-          <a href="#" className="btn-ghost">
-            <Github size={18} strokeWidth={2} aria-hidden />
-            View on GitHub
-          </a>
-        </div>
       </section>
 
       <section className="problem reveal">
         <div className="section-label">The Challenge</div>
         <h2 className="section-title">The Problem with Agent Memory</h2>
         <div className="problem-grid">
-          <div className="problem-card">
+          <BorderGlow className="problem-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <div className="card-icon">
               <Layers size={24} strokeWidth={2} aria-hidden />
             </div>
@@ -138,8 +131,8 @@ export default function LandingPage() {
               Vector DBs fill up with redundant, low-signal memories. Retrieval gets slower and noisier over
               time.
             </p>
-          </div>
-          <div className="problem-card">
+          </BorderGlow>
+          <BorderGlow className="problem-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <div className="card-icon">
               <Trash2 size={24} strokeWidth={2} aria-hidden />
             </div>
@@ -148,14 +141,14 @@ export default function LandingPage() {
               Agents store everything but forget nothing intentionally. There&apos;s no mechanism to prune what
               no longer matters.
             </p>
-          </div>
-          <div className="problem-card">
+          </BorderGlow>
+          <BorderGlow className="problem-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <div className="card-icon">
               <AlertCircle size={24} strokeWidth={2} aria-hidden />
             </div>
             <h3>Catastrophic Forgetting</h3>
             <p>Naive deletion destroys critical context. You need compression that preserves what matters.</p>
-          </div>
+          </BorderGlow>
         </div>
       </section>
 
@@ -223,7 +216,7 @@ export default function LandingPage() {
             <div className={`phase-content${phase === 1 ? " active" : ""}`} data-phase="1">
               <h3>Importance Scoring</h3>
               <p className="phase-desc">
-                Score: recency (25%) + access frequency (30%) + retrieval rank (20%) + semantic uniqueness (25%).
+                Total score: recency (25%) + access frequency (30%) + retrieval rank (20%) + semantic uniqueness (25%).
               </p>
               <div
                 className="code-block"
@@ -357,48 +350,48 @@ export default function LandingPage() {
         <div className="section-label">Capabilities</div>
         <h2 className="section-title">Everything You Need</h2>
         <div className="features-grid">
-          <div className="feature-card">
+          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <Brain size={26} strokeWidth={2} />
             </span>
             <h3>Local Embeddings</h3>
             <p>sentence-transformers running locally. No API key needed, no data leaves your machine.</p>
-          </div>
-          <div className="feature-card">
+          </BorderGlow>
+          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <Database size={26} strokeWidth={2} />
             </span>
             <h3>ChromaDB Vector Store</h3>
             <p>Persistent, cosine similarity search with metadata filtering and collection management.</p>
-          </div>
-          <div className="feature-card">
+          </BorderGlow>
+          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <ShieldCheck size={26} strokeWidth={2} />
             </span>
             <h3>Dry-Run by Default</h3>
             <p>Preview every compression operation before committing. No surprises, no lost memories.</p>
-          </div>
-          <div className="feature-card">
+          </BorderGlow>
+          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <BarChart3 size={26} strokeWidth={2} />
             </span>
             <h3>Composite Scoring</h3>
             <p>Weighted combination of recency, access frequency, retrieval rank, and semantic uniqueness.</p>
-          </div>
-          <div className="feature-card">
+          </BorderGlow>
+          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <Zap size={26} strokeWidth={2} />
             </span>
             <h3>Background Scheduler</h3>
             <p>Runs compression async on a configurable interval. Never blocks the agent&apos;s main loop.</p>
-          </div>
-          <div className="feature-card">
+          </BorderGlow>
+          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <Bird size={26} strokeWidth={2} />
             </span>
             <h3>Canary Protection</h3>
             <p>Inject test memories and verify they survive compression. Catch regressions before they matter.</p>
-          </div>
+          </BorderGlow>
         </div>
       </section>
     </>
