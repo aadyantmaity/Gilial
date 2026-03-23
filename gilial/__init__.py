@@ -1,5 +1,4 @@
 from gilial.core.schema import Memory
-from gilial.core.db import ChromaDB
 from gilial.infra.telemetry import Telemetry
 from gilial.core.writer import MemoryWriter
 from gilial.infra.scheduler import CompressionScheduler
@@ -10,9 +9,12 @@ from gilial.eval.audit import CompressionAudit
 from gilial.eval.metrics import EvalReport
 from gilial.eval.evaluator import CompressionEvaluator
 from gilial.tuning.tuner import CompressionTuner, TuneConfig
+from gilial.integrations.pinecone_db import PineconeDB
+from gilial.integrations.qdrant_db import QdrantDB
 
 __all__ = [
-    "Memory", "ChromaDB", "Telemetry", "MemoryWriter", "CompressionScheduler",
+    "Memory", "Telemetry", "MemoryWriter", "CompressionScheduler",
     "CanarySet", "RetrievalRegressionTest", "SemanticCoverageChecker", "CompressionAudit",
     "CompressionEvaluator", "CompressionTuner", "TuneConfig", "EvalReport",
+    "PineconeDB", "QdrantDB",
 ]

@@ -8,7 +8,7 @@ from gilial.core.writer import MemoryWriter
 # Helpers for deterministic embeddings
 # ---------------------------------------------------------------------------
 
-EMBED_DIM = 128  # small dimension, enough for Chroma
+EMBED_DIM = 128  # small dimension, enough for vector similarity tests
 
 
 def _unit_vector(index: int, dim: int = EMBED_DIM) -> list[float]:
@@ -63,19 +63,27 @@ def embedding_dispatcher():
 
 @pytest.fixture()
 def mock_writer(tmp_path, embedding_dispatcher):
-    """A MemoryWriter with mocked SentenceTransformer that returns predictable embeddings.
+    """A MemoryWriter with mocked SentenceTransformer and a mock database backend.
 
-    The writer stores data in a temporary Chroma directory and writes
+    The writer uses a mocked vector database and writes
     telemetry into *tmp_path*/telemetry.jsonl.
     """
-    chroma_dir = str(tmp_path / "chroma_data")
     telemetry_path = str(tmp_path / "telemetry.jsonl")
 
     with patch("gilial.core.writer._model") as mock_model:
         import numpy as np
         mock_model.encode.side_effect = lambda text: np.array(embedding_dispatcher.get(text))
 
-        writer = MemoryWriter(chroma_path=chroma_dir)
+        # Create a mock database that implements the vector DB interface
+        mock_db = MagicMock()
+        mock_db.add_memory = MagicMock()
+        mock_db.get_by_id = MagicMock()
+        mock_db.update_metadata = MagicMock()
+        mock_db.get_all = MagicMock(return_value=[])
+        mock_db.delete = MagicMock()
+        mock_db.search = MagicMock(return_value=[])
+
+        writer = MemoryWriter(db=mock_db)
         writer.telemetry.log_path = tmp_path / "telemetry.jsonl"
         yield writer
 

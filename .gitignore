@@ -1,6 +1,6 @@
 /.venv/
 /.claude
-/README.md
+*.md
 telemetry.jsonl
 /chroma_data
 /.pytest_cache

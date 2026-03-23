@@ -46,11 +46,3 @@ class Memory:
             tags=d.get("tags", []),
         )
 
-    def to_chroma_metadata(self) -> dict:
-        return {
-            "content": self.content,
-            "timestamp": self.timestamp.isoformat(),
-            "access_count": self.access_count,
-            "importance_score": self.importance_score,
-            "tags": ",".join(self.tags),
-        }

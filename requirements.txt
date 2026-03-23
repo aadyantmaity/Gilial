@@ -1,5 +1,6 @@
-chromadb
 sentence-transformers
 pytest
 scikit-learn
 hdbscan
+pinecone-client>=3.0.0
+qdrant-client>=2.0.0

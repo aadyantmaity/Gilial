@@ -1,14 +1,18 @@
 from sentence_transformers import SentenceTransformer
 from gilial.core.schema import Memory
-from gilial.core.db import ChromaDB
 from gilial.infra.telemetry import Telemetry
 
 _model = SentenceTransformer("all-MiniLM-L6-v2")  # 384-dim, runs locally, no API key
 
 class MemoryWriter:
-    def __init__(self, chroma_path: str = "./chroma_data"):
+    def __init__(self, db):
+        """Initialize MemoryWriter with a vector database backend.
+
+        Args:
+            db: A vector database instance (PineconeDB or QdrantDB)
+        """
         self.model = _model
-        self.db = ChromaDB(path=chroma_path)
+        self.db = db
         self.telemetry = Telemetry()
 
     def embed(self, text: str) -> list[float]:
