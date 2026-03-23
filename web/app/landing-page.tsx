@@ -9,7 +9,6 @@ import {
   Brain,
   Database,
   Layers,
-  Scale,
   ShieldCheck,
   Trash2,
   Zap,
@@ -78,21 +77,26 @@ export default function LandingPage() {
       <nav>
         <div className="nav-left">
           <a href="#" className="logo" aria-label="Gilial home">
-            Gilial
+            <span className="logo-text">Gilial</span>
           </a>
           <ul className="nav-links">
             <li>
-              <a href="#walkthrough">How it Works</a>
+              <a href="#walkthrough" className="nav-link">How it Works</a>
             </li>
             <li>
-              <a href="#features">Features</a>
-            </li>
-            <li>
-              <a href="#" className="nav-link-icon">
-                Docs
-              </a>
+              <a href="#features" className="nav-link">Features</a>
             </li>
           </ul>
+        </div>
+        <div className="nav-right">
+          <a href="#" className="nav-icon-link" aria-label="GitHub" title="GitHub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 -.5-3 .5s-4.4.5-5.8 0c-1.9-1-3-0.5-3-0.5-.6 1.1-.9 2.35-.9 3.5 0 3.5 3 5.5 6 5.5-.5.5-.9 1.1-1 1.5-.9 0-1.7-.5-2.3-1s-1.1-1.5-1.9-1.5c-.9 0-1.7.5-1.9 1.5-.2 1 .1 1.5.9 2s1.2 1 2 1 1.6.5 2.6.5V22"/>
+            </svg>
+          </a>
+          <a href="#" className="nav-icon-link" aria-label="Documentation" title="Documentation">
+            <BookOpen size={18} />
+          </a>
         </div>
       </nav>
 
@@ -100,7 +104,7 @@ export default function LandingPage() {
         <h1>
           <span className="gradient-text">
             <TextType
-              text="What should your agent forget?"
+              text="Clean up your agent's memory"
               as="span"
               typingSpeed={75}
               pauseDuration={3000}
@@ -113,14 +117,26 @@ export default function LandingPage() {
           </span>
         </h1>
         <p className="hero-subtitle-fade">
-          Gilial merges similar memories, deletes low-value ones, and summarizes clusters to
-          keep your agent&apos;s memory lean and fast.
+          Connect your vector database and automatically compress memories. Merge duplicates, delete noise, and summarize clusters to keep retrieval fast and relevant.
         </p>
+        <div className="hero-ctas">
+          <BorderGlow
+            className="btn-primary-glow"
+            borderRadius={50}
+            glowRadius={30}
+            backgroundColor="var(--primary)"
+          >
+            <a href="#" className="btn-primary-inner">
+              Get Started
+              <ArrowRight size={16} />
+            </a>
+          </BorderGlow>
+        </div>
       </section>
 
       <section className="problem reveal">
-        <div className="section-label">The Challenge</div>
-        <h2 className="section-title">The Problem with Agent Memory</h2>
+        <div className="section-label">The Problem</div>
+        <h2 className="section-title">Why Memory Compression Matters</h2>
         <div className="problem-grid">
           <BorderGlow className="problem-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <div className="card-icon">
@@ -128,35 +144,33 @@ export default function LandingPage() {
             </div>
             <h3>Unbounded Growth</h3>
             <p>
-              Vector DBs fill up with redundant, low-signal memories. Retrieval gets slower and noisier over
-              time.
+              Vector DBs fill up with redundant, low-signal memories. Retrieval gets slower and noisier as your agent learns.
             </p>
           </BorderGlow>
           <BorderGlow className="problem-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <div className="card-icon">
               <Trash2 size={24} strokeWidth={2} aria-hidden />
             </div>
-            <h3>No Garbage Collection</h3>
+            <h3>Manual Management</h3>
             <p>
-              Agents store everything but forget nothing intentionally. There&apos;s no mechanism to prune what
-              no longer matters.
+              No built-in way to prune or consolidate memories. You&apos;re managing noise manually or just ignoring the problem.
             </p>
           </BorderGlow>
           <BorderGlow className="problem-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <div className="card-icon">
               <AlertCircle size={24} strokeWidth={2} aria-hidden />
             </div>
-            <h3>Catastrophic Forgetting</h3>
-            <p>Naive deletion destroys critical context. You need compression that preserves what matters.</p>
+            <h3>Context Loss</h3>
+            <p>Deleting memories is risky. You need compression that keeps what matters while removing the junk.</p>
           </BorderGlow>
         </div>
       </section>
 
       <section className="walkthrough reveal" id="walkthrough">
         <div className="section-label">How It Works</div>
-        <h2 className="section-title">A Complete Compression Pipeline</h2>
+        <h2 className="section-title">The Compression Pipeline</h2>
         <p className="section-subtitle" style={{ margin: "0 auto 0" }}>
-          Seven phases, each independently testable
+          Seven phases of memory optimization
         </p>
         <div className="walkthrough-container">
           <div className="stepper" role="tablist" aria-label="Pipeline phases">
@@ -347,50 +361,50 @@ export default function LandingPage() {
       </section>
 
       <section className="features reveal" id="features">
-        <div className="section-label">Capabilities</div>
-        <h2 className="section-title">Everything You Need</h2>
+        <div className="section-label">Features</div>
+        <h2 className="section-title">Built for Developers</h2>
         <div className="features-grid">
-          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
-            <span className="feature-icon" aria-hidden="true">
-              <Brain size={26} strokeWidth={2} />
-            </span>
-            <h3>Local Embeddings</h3>
-            <p>sentence-transformers running locally. No API key needed, no data leaves your machine.</p>
-          </BorderGlow>
           <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <Database size={26} strokeWidth={2} />
             </span>
-            <h3>ChromaDB Vector Store</h3>
-            <p>Persistent, cosine similarity search with metadata filtering and collection management.</p>
+            <h3>Multi-DB Support</h3>
+            <p>Works with Pinecone, Weaviate, Milvus, and any OpenAI-compatible vector database.</p>
           </BorderGlow>
           <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <ShieldCheck size={26} strokeWidth={2} />
             </span>
-            <h3>Dry-Run by Default</h3>
-            <p>Preview every compression operation before committing. No surprises, no lost memories.</p>
+            <h3>Dry-Run First</h3>
+            <p>Preview every operation before committing. See exactly what will be merged, summarized, and deleted.</p>
+          </BorderGlow>
+          <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
+            <span className="feature-icon" aria-hidden="true">
+              <Brain size={26} strokeWidth={2} />
+            </span>
+            <h3>Smart Clustering</h3>
+            <p>HDBSCAN-powered similarity detection. Automatically identifies and merges near-duplicate memories.</p>
           </BorderGlow>
           <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <BarChart3 size={26} strokeWidth={2} />
             </span>
-            <h3>Composite Scoring</h3>
-            <p>Weighted combination of recency, access frequency, retrieval rank, and semantic uniqueness.</p>
+            <h3>Scoring Metrics</h3>
+            <p>Recency, access frequency, retrieval rank, and semantic uniqueness combined for smart pruning.</p>
           </BorderGlow>
           <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <Zap size={26} strokeWidth={2} />
             </span>
-            <h3>Background Scheduler</h3>
-            <p>Runs compression async on a configurable interval. Never blocks the agent&apos;s main loop.</p>
+            <h3>REST API</h3>
+            <p>Simple HTTP endpoints to trigger compression, check status, and manage your memory pipeline.</p>
           </BorderGlow>
           <BorderGlow className="feature-card" borderRadius={16} glowRadius={30} backgroundColor="linear-gradient(135deg, rgba(23, 40, 43, 0.8) 0%, rgba(31, 56, 60, 0.6) 100%)">
             <span className="feature-icon" aria-hidden="true">
               <Bird size={26} strokeWidth={2} />
             </span>
-            <h3>Canary Protection</h3>
-            <p>Inject test memories and verify they survive compression. Catch regressions before they matter.</p>
+            <h3>Open Source</h3>
+            <p>Self-hosted or use our managed service. Full transparency, no vendor lock-in.</p>
           </BorderGlow>
         </div>
       </section>
