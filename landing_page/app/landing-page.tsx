@@ -339,19 +339,18 @@ export default function LandingPage() {
             <div className={`phase-content${phase === 6 ? " active" : ""}`} data-phase="6">
               <h3>Tuning</h3>
               <p className="phase-desc">
-                A/B test compression configs. Compare conservative vs aggressive vs balanced strategies.
+                A/B test compression configs. Compare balanced vs aggressive strategies.
               </p>
               <div
                 className="code-block"
                 dangerouslySetInnerHTML={{
                   __html: `<span class="hi">Strategy Comparison</span>
 <span class="cm">──────────────────────────────────────────</span>
-  <span class="kw">conservative</span>  NDCG: <span class="num">0.824</span>  Reduction: <span class="num">0.18</span>
   <span class="hi">balanced</span>      NDCG: <span class="num">0.810</span>  Reduction: <span class="num">0.32</span>
   aggressive    NDCG: <span class="num">0.695</span>  Reduction: <span class="num">0.54</span>
 <span class="cm">──────────────────────────────────────────</span>
 
-  <span class="kw">Best (balanced):</span> <span class="str">conservative</span>
+  <span class="kw">Best (balanced):</span> <span class="str">balanced</span>
   <span class="cm">Highest NDCG with meaningful compression</span>`,
                 }}
               />

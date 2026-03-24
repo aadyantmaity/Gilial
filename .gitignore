@@ -1,6 +1,5 @@
 /.venv/
 /.claude
-*.md
 telemetry.jsonl
 /chroma_data
 /.pytest_cache
@@ -11,3 +10,4 @@ __pycache__/
 demo.py
 .env
 node_modules
+/landing_page/*.md

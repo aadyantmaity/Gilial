@@ -79,7 +79,7 @@ class PineconeCompressionClient:
         """Compress vectors in the connected Pinecone index.
 
         Args:
-            strategy: Compression strategy - 'balanced', 'aggressive', or 'conservative'.
+            strategy: Compression strategy - 'balanced' or 'aggressive'.
             dry_run: If True, compute results without writing changes.
 
         Returns:
