@@ -9,3 +9,4 @@ __pycache__/
 *.jsonl
 /snapshots
 demo.py
+.env
