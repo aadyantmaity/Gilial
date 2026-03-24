@@ -10,3 +10,4 @@ __pycache__/
 /snapshots
 demo.py
 .env
+node_modules
