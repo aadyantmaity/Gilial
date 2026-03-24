@@ -113,21 +113,35 @@ class PineconeCompressionClient:
         )
 
     def estimate_savings(self) -> dict:
-        """Estimate compression savings without performing any changes."""
+        """Estimate compression savings without performing any changes.
+
+        Samples vectors from the index to estimate actual compression rate.
+        """
         connector = self._get_connector()
+        compressor = self._get_compressor()
         stats = connector.get_index_stats()
 
         original_count = stats.get("total_vector_count", 0)
         dimension = stats.get("dimension", 0)
         original_size_mb = (original_count * dimension * 4) / (1024 * 1024)
 
-        estimated_ratio = 0.45  # balanced default estimate
+        # Use compressor's sampling-based estimate
+        estimate_result = compressor.estimate_savings(
+            connector=connector,
+            strategy="balanced"
+        )
+
+        estimated_compressed_count = estimate_result.get("estimated_compressed_vectors", 0)
+        estimated_size_mb = estimate_result.get("estimated_compressed_size_mb", 0)
+        estimated_savings_pct = estimate_result.get("estimated_savings_pct", 0)
+
         return {
             "original_vectors": original_count,
-            "dimension": dimension,
+            "compressed_vectors": estimated_compressed_count,
             "original_size_mb": round(original_size_mb, 2),
-            "estimated_compressed_size_mb": round(original_size_mb * estimated_ratio, 2),
-            "estimated_savings_pct": round((1 - estimated_ratio) * 100, 1),
+            "compressed_size_mb": round(estimated_size_mb, 2),
+            "compression_ratio": round(estimated_size_mb / original_size_mb, 2) if original_size_mb > 0 else 0,
+            "savings_pct": round(estimated_savings_pct, 1),
         }
 
     def get_status(self) -> dict:

@@ -51,17 +51,66 @@ class PineconeConnector:
             List of vectors with metadata
         """
         try:
+            import numpy as np
+
+            # Get index stats to know dimension and total count
+            stats = self.get_index_stats()
+            dimension = stats.get("dimension", 1536)
+            total_count = stats.get("total_vector_count", 0)
+
+            if total_count == 0:
+                return []
+
             results = []
-            for ids in self._paginate_ids(limit):
-                vectors = self.index.fetch(ids=ids, namespace=self.namespace)
-                for vid, record in vectors.get("vectors", {}).items():
-                    results.append({
-                        "id": vid,
-                        "values": record.get("values", []),
-                        "metadata": record.get("metadata", {}),
-                    })
+            seen_ids = set()
+            page_size = min(100, limit)
+            max_attempts = 10  # Try up to 10 random queries
+
+            # Use multiple random query vectors to get diverse results
+            for attempt in range(max_attempts):
+                if len(results) >= min(limit, total_count):
+                    break
+
+                # Generate a random query vector
+                random_vector = np.random.randn(dimension).tolist()
+
+                try:
+                    query_results = self.index.query(
+                        vector=random_vector,
+                        top_k=page_size,
+                        namespace=self.namespace,
+                        include_metadata=True,
+                        include_values=True,
+                    )
+
+                    matches = query_results.get("matches", [])
+                    if not matches:
+                        continue
+
+                    # Fetch full vectors (query gives limited data)
+                    ids = [m["id"] for m in matches if m["id"] not in seen_ids]
+                    if not ids:
+                        continue
+
+                    fetched_vectors = self.index.fetch(ids=ids, namespace=self.namespace)
+
+                    for vid, record in fetched_vectors.get("vectors", {}).items():
+                        if vid not in seen_ids:
+                            results.append({
+                                "id": vid,
+                                "values": record.get("values", []),
+                                "metadata": record.get("metadata", {}),
+                            })
+                            seen_ids.add(vid)
+
+                except Exception as e:
+                    print(f"Warning: Query attempt {attempt + 1} failed: {e}")
+                    continue
+
+            print(f"get_all() fetched {len(results)} vectors (total in index: {total_count})")
             return results
         except Exception as e:
+            print(f"Error in get_all(): {e}")
             raise RuntimeError(f"Failed to fetch all vectors: {e}")
 
     def get_by_id(self, memory_id: str) -> Optional[Dict[str, Any]]:

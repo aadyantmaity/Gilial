@@ -37,7 +37,6 @@ connections: dict[str, PineconeCompressionClient] = {}
 class StrategyEnum(str, Enum):
     balanced = "balanced"
     aggressive = "aggressive"
-    conservative = "conservative"
 
 
 class CreateConnectionRequest(BaseModel):
@@ -163,27 +162,23 @@ def get_status(connection_id: str):
     try:
         status = client.get_status()
 
-        # Extract only the fields we need
-        result = {
-            "index_name": getattr(status, "index_name", "unknown"),
-            "environment": getattr(status, "environment", "unknown"),
-            "total_vector_count": int(getattr(status, "total_vector_count", 0)),
-            "dimension": int(getattr(status, "dimension", 0)),
-            "namespaces": {}
-        }
+        # Convert namespaces to JSON-serializable format
+        namespaces = {}
+        for ns_name, ns_data in status.get("namespaces", {}).items():
+            if hasattr(ns_data, "vector_count"):
+                namespaces[ns_name] = {"vector_count": ns_data.vector_count}
+            elif isinstance(ns_data, dict):
+                namespaces[ns_name] = {"vector_count": ns_data.get("vector_count", 0)}
+            else:
+                namespaces[ns_name] = {"vector_count": 0}
 
-        # Extract namespaces if available
-        namespaces = getattr(status, "namespaces", {})
-        if isinstance(namespaces, dict):
-            for ns_name, ns_data in namespaces.items():
-                if isinstance(ns_data, dict):
-                    result["namespaces"][ns_name] = {
-                        "vector_count": int(ns_data.get("vector_count", 0))
-                    }
-                else:
-                    result["namespaces"][ns_name] = {
-                        "vector_count": int(getattr(ns_data, "vector_count", 0))
-                    }
+        result = {
+            "index_name": status.get("index_name", "unknown"),
+            "environment": status.get("environment", "unknown"),
+            "total_vector_count": int(status.get("total_vector_count", 0)),
+            "dimension": int(status.get("dimension", 0)),
+            "namespaces": namespaces
+        }
 
         return JSONResponse(content=result)
     except ConnectionError as e:
@@ -202,12 +197,15 @@ def estimate_savings(
     try:
         estimate = client.estimate_savings()
 
-        # Extract only the fields we need to avoid serialization issues
-        result = {}
-        for attr in ['compression_ratio', 'savings_pct', 'original_vectors', 'compressed_vectors', 'original_size_mb', 'compressed_size_mb']:
-            if hasattr(estimate, attr):
-                val = getattr(estimate, attr)
-                result[attr] = float(val) if isinstance(val, (int, float)) else val
+        # estimate_savings() now returns accurate estimates based on strategy
+        result = {
+            "original_vectors": estimate.get("original_vectors", 0),
+            "original_size_mb": estimate.get("original_size_mb", 0),
+            "compressed_vectors": estimate.get("compressed_vectors", 0),
+            "compressed_size_mb": estimate.get("compressed_size_mb", 0),
+            "compression_ratio": estimate.get("compression_ratio", 0),
+            "savings_pct": estimate.get("savings_pct", 0),
+        }
 
         return JSONResponse(content=result)
     except ConnectionError as e:
