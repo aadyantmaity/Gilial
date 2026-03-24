@@ -8,13 +8,25 @@ from enum import Enum
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+import json
 
 sys.path.insert(0, "/Users/aadyant/Gilial-1")
 
 from gilial_code import PineconeCompressionClient
 
 app = FastAPI(title="Gilial API", version="0.1.0")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3001", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # In-memory connection store
 connections: dict[str, PineconeCompressionClient] = {}
@@ -57,7 +69,10 @@ class StatusResponse(BaseModel):
     environment: str
     total_vector_count: int
     dimension: int
-    namespaces: dict
+    namespaces: dict = Field(default_factory=dict)
+
+    class Config:
+        extra = "allow"
 
 
 class ErrorResponse(BaseModel):
@@ -99,19 +114,20 @@ def create_connection(req: CreateConnectionRequest):
     connections[connection_id] = client
 
     try:
-        status = client.get_status()
+        # Return as JSONResponse to bypass Pydantic validation
+        return JSONResponse(
+            status_code=201,
+            content={
+                "connection_id": connection_id,
+                "status": "connected",
+            }
+        )
     except ConnectionError as e:
         del connections[connection_id]
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
         del connections[connection_id]
         raise HTTPException(status_code=500, detail=str(e))
-
-    return {
-        "connection_id": connection_id,
-        "status": "connected",
-        "index_stats": status,
-    }
 
 
 @app.post("/api/connections/{connection_id}/compress")
@@ -146,12 +162,34 @@ def get_status(connection_id: str):
     client = _get_client(connection_id)
     try:
         status = client.get_status()
+
+        # Extract only the fields we need
+        result = {
+            "index_name": getattr(status, "index_name", "unknown"),
+            "environment": getattr(status, "environment", "unknown"),
+            "total_vector_count": int(getattr(status, "total_vector_count", 0)),
+            "dimension": int(getattr(status, "dimension", 0)),
+            "namespaces": {}
+        }
+
+        # Extract namespaces if available
+        namespaces = getattr(status, "namespaces", {})
+        if isinstance(namespaces, dict):
+            for ns_name, ns_data in namespaces.items():
+                if isinstance(ns_data, dict):
+                    result["namespaces"][ns_name] = {
+                        "vector_count": int(ns_data.get("vector_count", 0))
+                    }
+                else:
+                    result["namespaces"][ns_name] = {
+                        "vector_count": int(getattr(ns_data, "vector_count", 0))
+                    }
+
+        return JSONResponse(content=result)
     except ConnectionError as e:
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-    return StatusResponse(**status)
 
 
 @app.get("/api/connections/{connection_id}/estimate")
@@ -163,12 +201,19 @@ def estimate_savings(
     client = _get_client(connection_id)
     try:
         estimate = client.estimate_savings()
+
+        # Extract only the fields we need to avoid serialization issues
+        result = {}
+        for attr in ['compression_ratio', 'savings_pct', 'original_vectors', 'compressed_vectors', 'original_size_mb', 'compressed_size_mb']:
+            if hasattr(estimate, attr):
+                val = getattr(estimate, attr)
+                result[attr] = float(val) if isinstance(val, (int, float)) else val
+
+        return JSONResponse(content=result)
     except ConnectionError as e:
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-    return estimate
 
 
 @app.on_event("startup")
