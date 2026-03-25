@@ -31,8 +31,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Gilial",
   description:
-    "Gilial merges similar memories, deletes low-value ones, and summarizes clusters.",
+    "Intelligently compress your Pinecone vector database. Remove low-scoring vectors to reduce storage costs while maintaining search quality.",
   themeColor: "#ffffff",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

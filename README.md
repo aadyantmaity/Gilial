@@ -8,6 +8,11 @@ Gilial is a vector compression system for Pinecone indexes. It intelligently rem
 2. **Run Compression**: Execute the compression algorithm with your preferred strategy (Balanced or Aggressive)
 3. **Monitor**: Track compression impact through generated metrics and visualizations
 
+## Documentation & Demo
+
+- **[Landing Page](https://gilial-landing.vercel.app/)** - Project overview and features
+- **[Documentation](https://gilial-docs.vercel.app/)** - Complete guides, API reference, and best practices
+
 ## Key Documents
 
 - **[analysis.md](analysis.md)** - Compression test results, impact metrics, and visualizations
