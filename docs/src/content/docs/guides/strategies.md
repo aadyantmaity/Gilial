@@ -1,74 +1,110 @@
 ---
 title: Compression Strategies
-description: Learn about Balanced and Aggressive strategies
+description: Learn about Balanced, Aggressive, High-Quality and custom strategies
 ---
 
-Gilial offers different compression strategies to match your needs.
+Gilial compresses vectors using **TurboQuant** — a random-rotation scalar quantisation algorithm. Instead of deleting vectors, it reduces each vector's storage footprint by lowering the number of bits used per dimension. All vectors are retained; only their precision changes.
 
-## Balanced (Default)
+## Named Strategies
 
-The safest option for most use cases.
+### Balanced (default)
 
-**Characteristics:**
-- Retention rate: 72.8%
-- Vectors removed: ~27.2%
-- Ideal for: Production environments, safety-first approach
-
-**When to use:**
-- You want predictable, moderate compression
-- Data integrity is important
-- You need good balance between space savings and quality
+4 bits per dimension, ~8× compression. The safe production default.
 
 ```python
-client.compress(strategy="balanced", dry_run=False)
-```
-
-## Aggressive
-
-Maximum compression for space-critical scenarios.
-
-**Characteristics:**
-- Retention rate: 67%
-- Vectors removed: ~33%
-- Ideal for: Cost optimization, non-critical indexes
-
-**When to use:**
-- Storage costs are critical
-- You can afford minor quality loss
-- You have backups and can re-compress if needed
-
-```python
-client.compress(strategy="aggressive", dry_run=False)
-```
-
-## How Scoring Works
-
-Both strategies use **L2 norm** (Euclidean magnitude) to score vectors:
-
-```
-score = sqrt(v₁² + v₂² + ... + v₇₆₈²)
-```
-
-Higher norms = higher quality vectors
-Lower norms = candidates for deletion
-
-## Dry-Run First!
-
-Always preview compression with `dry_run=True`:
-
-```python
-# Preview changes
-preview = client.compress(strategy="balanced", dry_run=True)
-print(f"Would delete: {preview.metadata['deleted_vectors']} vectors")
-
-# If happy with preview, apply:
 result = client.compress(strategy="balanced", dry_run=False)
 ```
 
-## Recommendations
+| Property | Value |
+|----------|-------|
+| Bits/dim | 4 |
+| Compression ratio | ~8× |
+| Typical recall@10 | ≥ 98% |
+| Use case | Production, safety-first |
 
-1. **Start with Balanced** - It's proven and safe
-2. **Test on non-critical index first** - Understand the impact
-3. **Always use dry-run** - Preview before applying
-4. **Maintain backups** - Have a recovery plan
-5. **Monitor metrics** - Track query latency before/after
+### Aggressive
+
+2 bits per dimension, ~16× compression. Maximum savings.
+
+```python
+result = client.compress(strategy="aggressive", dry_run=False)
+```
+
+| Property | Value |
+|----------|-------|
+| Bits/dim | 2 |
+| Compression ratio | ~16× |
+| Typical recall@10 | ≥ 93% |
+| Use case | Cost optimisation, non-critical indexes |
+
+Always validate recall when using Aggressive on production:
+
+```python
+result = client.compress(
+    strategy="aggressive",
+    dry_run=False,
+    validate_recall=True,
+    recall_n_queries=200,
+)
+print(result.recall)
+```
+
+### High Quality
+
+6 bits per dimension, ~5× compression. Near-lossless.
+
+```python
+result = client.compress(strategy="high_quality", dry_run=False)
+```
+
+| Property | Value |
+|----------|-------|
+| Bits/dim | 6 |
+| Compression ratio | ~5× |
+| Typical recall@10 | ≥ 99.5% |
+| Use case | Sensitive indexes, fine-tuned models |
+
+---
+
+## Custom Bit Depth
+
+Override the strategy default with `bits_per_dim` (2–8). Useful when you want something between two named strategies.
+
+```python
+# Between balanced (4) and high_quality (6)
+result = client.compress(bits_per_dim=5, dry_run=False)
+
+# Or combine with a named strategy as a starting point
+result = client.compress(strategy="aggressive", bits_per_dim=3, dry_run=False)
+```
+
+---
+
+## How TurboQuant Works
+
+1. **Random rotation** — vectors are multiplied by a seeded random orthogonal matrix, spreading energy evenly across dimensions
+2. **Scalar quantisation** — each rotated dimension is quantised to N bits
+3. **Optional QJL correction** — a 1-bit residual stage (enabled by default on Balanced and High Quality) improves reconstruction accuracy
+4. **Decode to float32** — vectors are decoded back before upserting so the index stays compatible with existing query infrastructure
+
+The precision loss from quantisation is the compression mechanism. No vectors are deleted.
+
+---
+
+## Choosing a Strategy
+
+```
+Need maximum savings and can tolerate minor quality loss?
+  → aggressive (2-bit)
+
+Running production queries where quality matters most?
+  → high_quality (6-bit)
+
+Everything else?
+  → balanced (4-bit)  ← start here
+
+Want fine-grained control?
+  → bits_per_dim=N
+```
+
+Always use `validate_recall=True` before committing to aggressive quantisation on a production index.

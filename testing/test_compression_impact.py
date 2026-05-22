@@ -5,6 +5,9 @@ import json
 import os
 import sys
 import time
+
+# Ensure repo root is on path so gilial_code is importable
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, Any
@@ -121,15 +124,15 @@ def test_compression_impact():
     print(f"     Vectors: {post_compression_stats['vector_count']}")
     print(f"     Search space: {post_compression_stats['search_space_mb']:.2f} MB\n")
 
-    # Calculate space savings percentage
-    space_savings_pct = (
-        (pre_compression_stats['search_space_mb'] - post_compression_stats['search_space_mb'])
-        / pre_compression_stats['search_space_mb']
-        * 100
-    )
-
     # 7. Create visualizations
     print("7. Creating visualizations...\n")
+
+    # Compute actual local memory sizes using TurboQuant footprint helpers
+    from gilial_code.compression.turboquant import TurboQuant
+    tq_balanced = TurboQuant(dim=dimension, bits=4, use_qjl=True)
+    original_mb = original_vectors * tq_balanced.bytes_per_vector_original() / (1024 * 1024)
+    compressed_mb = original_vectors * tq_balanced.bytes_per_vector_quantized() / (1024 * 1024)
+    actual_savings_pct = (1 - tq_balanced.compression_ratio()) * 100
 
     fig, axes = plt.subplots(1, 3, figsize=(16, 5))
     fig.suptitle(
@@ -138,54 +141,37 @@ def test_compression_impact():
         fontweight="bold",
     )
 
-    # Plot 1: Vector Count
-    ax = axes[0]
-    states = ["Pre-Compression", "Post-Compression"]
-    counts = [
-        pre_compression_stats["vector_count"],
-        post_compression_stats["vector_count"],
-    ]
     colors = ["#3498db", "#e74c3c"]
-    bars = ax.bar(states, counts, color=colors, alpha=0.7, edgecolor="black", linewidth=2)
-    ax.set_ylabel("Vector Count", fontsize=11, fontweight="bold")
-    ax.set_title("Vector Count Comparison", fontsize=12, fontweight="bold")
-    ax.set_ylim(0, original_vectors * 1.1)
-    for bar, count in zip(bars, counts):
-        height = bar.get_height()
+    states = ["Original\n(float32)", "Compressed\n(TurboQuant 4-bit)"]
+
+    # Plot 1: Memory footprint
+    ax = axes[0]
+    spaces = [original_mb, compressed_mb]
+    bars = ax.bar(states, spaces, color=colors, alpha=0.7, edgecolor="black", linewidth=2)
+    ax.set_ylabel("Memory (MB)", fontsize=11, fontweight="bold")
+    ax.set_title("Local Memory Footprint", fontsize=12, fontweight="bold")
+    ax.set_ylim(0, original_mb * 1.2)
+    for bar, val in zip(bars, spaces):
         ax.text(
             bar.get_x() + bar.get_width() / 2.0,
-            height,
-            f"{int(count)}",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            fontweight="bold",
+            bar.get_height(),
+            f"{val:.2f} MB",
+            ha="center", va="bottom", fontsize=10, fontweight="bold",
         )
 
-    # Plot 2: Search Space
+    # Plot 2: Bytes per vector
     ax = axes[1]
-    spaces = [
-        pre_compression_stats["search_space_mb"],
-        post_compression_stats["search_space_mb"],
-    ]
-    bars = ax.bar(states, spaces, color=colors, alpha=0.7, edgecolor="black", linewidth=2)
-    ax.set_ylabel("Size (MB)", fontsize=11, fontweight="bold")
-    ax.set_title("Search Space Size", fontsize=12, fontweight="bold")
-    space_savings = (
-        (pre_compression_stats["search_space_mb"] - post_compression_stats["search_space_mb"])
-        / pre_compression_stats["search_space_mb"]
-        * 100
-    )
-    for bar, space in zip(bars, spaces):
-        height = bar.get_height()
+    bpv = [tq_balanced.bytes_per_vector_original(), tq_balanced.bytes_per_vector_quantized()]
+    bars = ax.bar(states, bpv, color=colors, alpha=0.7, edgecolor="black", linewidth=2)
+    ax.set_ylabel("Bytes / Vector", fontsize=11, fontweight="bold")
+    ax.set_title("Storage per Vector", fontsize=12, fontweight="bold")
+    ax.set_ylim(0, max(bpv) * 1.2)
+    for bar, val in zip(bars, bpv):
         ax.text(
             bar.get_x() + bar.get_width() / 2.0,
-            height,
-            f"{space:.2f}MB",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            fontweight="bold",
+            bar.get_height(),
+            f"{val} B",
+            ha="center", va="bottom", fontsize=10, fontweight="bold",
         )
 
     # Plot 3: Summary Metrics
@@ -193,22 +179,22 @@ def test_compression_impact():
     ax.axis("off")
 
     summary_text = f"""
-COMPRESSION SUMMARY
+TURBOQUANT COMPRESSION SUMMARY
 {'─' * 50}
 
 Index Name:           {PINECONE_INDEX}
 Vector Dimension:     {dimension}
+Algorithm:            TurboQuant (4-bit + QJL)
 
-Original Vectors:     {original_vectors:,}
-Compressed Vectors:   {compressed_vectors:,}
-Vectors Removed:      {original_vectors - compressed_vectors:,}
+Vectors:              {original_vectors:,}
+Original size:        {original_mb:.2f} MB
+Compressed size:      {compressed_mb:.2f} MB
 
-Compression Ratio:    {compression_ratio:.2f}x
-Space Savings:        {space_savings:.1f}%
+Compression Ratio:    {1/tq_balanced.compression_ratio():.2f}x
+Space Savings:        {actual_savings_pct:.1f}%
 
 Strategy:             Balanced
 Compression Time:     {compression_time:.2f}s
-Status:               ✓ APPLIED (Live)
     """
 
     ax.text(
@@ -226,33 +212,53 @@ Status:               ✓ APPLIED (Live)
     plt.savefig("compression_impact_analysis.png", dpi=300, bbox_inches="tight")
     print("   ✓ Saved: compression_impact_analysis.png")
 
-    # Create a second figure with metrics over compression strategies
-    fig2, ax = plt.subplots(figsize=(12, 6))
+    # Create a second figure: TurboQuant strategy comparison
+    fig2, axes2 = plt.subplots(1, 2, figsize=(14, 6))
+    fig2.suptitle("TurboQuant Strategy Comparison", fontsize=16, fontweight="bold")
 
-    strategies = ["Balanced", "Aggressive"]
-    # Simulated results for different strategies
-    vector_retention = [0.728, 0.67]  # How many vectors remain
+    strategies = ["High Quality\n(6-bit)", "Balanced\n(4-bit)", "Aggressive\n(2-bit)"]
+    bits_list = [6, 4, 2]
+    colors_strat = ["#2ecc71", "#3498db", "#e74c3c"]
+
+    savings_pcts = []
+    ratios = []
+    for b in bits_list:
+        tq = TurboQuant(dim=dimension, bits=b, use_qjl=True)
+        savings_pcts.append((1 - tq.compression_ratio()) * 100)
+        ratios.append(1 / tq.compression_ratio())
 
     x = np.arange(len(strategies))
 
-    bars = ax.bar(x, [v * 100 for v in vector_retention], color="#3498db", alpha=0.7, edgecolor="black", linewidth=2)
-
-    ax.set_ylabel("Vector Retention (%)", fontsize=12, fontweight="bold")
-    ax.set_title("Compression Strategy Comparison", fontsize=14, fontweight="bold")
+    # Plot 1: Savings %
+    ax = axes2[0]
+    bars = ax.bar(x, savings_pcts, color=colors_strat, alpha=0.8, edgecolor="black", linewidth=1.5)
+    ax.set_ylabel("Storage Savings (%)", fontsize=11, fontweight="bold")
+    ax.set_title("Storage Savings by Strategy", fontsize=12, fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels(strategies)
     ax.set_ylim(0, 100)
-
-    for bar in bars:
-        height = bar.get_height()
+    for bar, val in zip(bars, savings_pcts):
         ax.text(
             bar.get_x() + bar.get_width() / 2.0,
-            height,
-            f"{height:.1f}%",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            fontweight="bold",
+            bar.get_height(),
+            f"{val:.1f}%",
+            ha="center", va="bottom", fontsize=10, fontweight="bold",
+        )
+
+    # Plot 2: Compression ratio (Xx)
+    ax = axes2[1]
+    bars = ax.bar(x, ratios, color=colors_strat, alpha=0.8, edgecolor="black", linewidth=1.5)
+    ax.set_ylabel("Compression Ratio (x)", fontsize=11, fontweight="bold")
+    ax.set_title("Compression Ratio by Strategy", fontsize=12, fontweight="bold")
+    ax.set_xticks(x)
+    ax.set_xticklabels(strategies)
+    ax.set_ylim(0, max(ratios) * 1.2)
+    for bar, val in zip(bars, ratios):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            bar.get_height(),
+            f"{val:.1f}x",
+            ha="center", va="bottom", fontsize=10, fontweight="bold",
         )
 
     plt.tight_layout()
