@@ -11,3 +11,4 @@ demo.py
 .env
 node_modules
 /landing_page/*.md
+landing_page/
